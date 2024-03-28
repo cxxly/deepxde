@@ -8,7 +8,7 @@ from ..backend import backend_name, tf, torch, jax, paddle
 
 class JacobianReverse(Jacobian):
     def __call__(self, i=None, j=None):
-        super().__call__(i=i, j=j)
+        super(JacobianReverse, self).__call__(i=i, j=j)
         # Compute a column is not supported in reverse mode, unless there is only one
         # output.
         if i is None:

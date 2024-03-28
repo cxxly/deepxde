@@ -9,7 +9,7 @@ from deepxde.backend import tf
 # Import jax.numpy if using backend jax
 # import jax.numpy as jnp
 # Import paddle if using backend paddle
-# import paddle
+import paddle
 
 
 def pde(x, y):
@@ -18,13 +18,13 @@ def pde(x, y):
     # Backend jax
     # dy_xx, _ = dde.grad.hessian(y, x)
     # Use tf.sin for backend tensorflow.compat.v1 or tensorflow
-    return -dy_xx - np.pi ** 2 * tf.sin(np.pi * x)
+    # return -dy_xx - np.pi ** 2 * tf.sin(np.pi * x)
     # Use torch.sin for backend pytorch
     # return -dy_xx - np.pi ** 2 * torch.sin(np.pi * x)
     # Use jax.numpy.sin for backend jax
     # return -dy_xx - np.pi ** 2 * jnp.sin(np.pi * x)
     # Use paddle.sin for backend paddle
-    # return -dy_xx - np.pi ** 2 * paddle.sin(np.pi * x)
+    return -dy_xx - np.pi ** 2 * paddle.sin(np.pi * x)
 
 
 def boundary(x, on_boundary):
@@ -39,7 +39,7 @@ geom = dde.geometry.Interval(-1, 1)
 bc = dde.icbc.DirichletBC(geom, func, boundary)
 data = dde.data.PDE(geom, pde, bc, 16, 2, solution=func, num_test=100)
 
-layer_size = [1] + [50] * 3 + [1]
+layer_size = [1] + [1] * 1 + [1]
 activation = "tanh"
 initializer = "Glorot uniform"
 net = dde.nn.FNN(layer_size, activation, initializer)
