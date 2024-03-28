@@ -68,15 +68,21 @@ class DirichletBC(BC):
 
     def __init__(self, geom, func, on_boundary, component=0):
         super().__init__(geom, on_boundary, component)
-        self.func = npfunc_range_autocache(utils.return_tensor(func))
+        import paddle
+        # self.func = paddle.jit.not_to_static(npfunc_range_autocache(utils.return_tensor(func)))
+        self.func = paddle.jit.not_to_static(utils.return_tensor(func))
 
     def error(self, X, inputs, outputs, beg, end, aux_var=None):
-        values = self.func(X, beg, end, aux_var)
+        # breakpoint()
+        # values = self.func(X, beg, end, aux_var)
+        values = self.func(X[beg:end])
+        # values=paddle.to_tensor(values)
         if bkd.ndim(values) == 2 and bkd.shape(values)[1] != 1:
             raise RuntimeError(
                 "DirichletBC function should return an array of shape N by 1 for each "
                 "component. Use argument 'component' for different output components."
             )
+        # breakpoint()
         return outputs[beg:end, self.component : self.component + 1] - values
 
 
